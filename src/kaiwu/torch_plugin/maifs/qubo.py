@@ -616,8 +616,12 @@ def _solve_ising_sa(
     resolved_kwargs.update(optimizer_kwargs)
     optimizer = kw.classical.SimulatedAnnealingOptimizer(**resolved_kwargs)
 
+    rng_state = np.random.get_state()
     np.random.seed(int(random_state))
-    result = optimizer.solve(matrix)
+    try:
+        result = optimizer.solve(matrix)
+    finally:
+        np.random.set_state(rng_state)
 
     if result is None:
         raise RuntimeError("SimulatedAnnealingOptimizer did not return a solution.")
